@@ -12,4 +12,4 @@ dependancies:
   - Axios
 
 Runs on localhost: 8000
-http://localhost:8000/news 
+- http://localhost:8000/news 
