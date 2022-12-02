@@ -4,6 +4,7 @@ const express = require('express')
 const axios = require('axios')
 const cheerio = require('cheerio')
 
+
 //calls express to release functionality in app
 const app = express()
 
@@ -37,8 +38,8 @@ newspapers.forEach(newspaper => {
         const $ = cheerio.load(html)
 
         $('a:contains("climate")', html).each(function () {
-            const title = $(this).text()
-            const url = $(this).attr('href')
+            const title = $(this).text() //get text from article
+            const url = $(this).attr('href') //ger url from article
 
             article.push({
                 title,
@@ -46,7 +47,6 @@ newspapers.forEach(newspaper => {
                 source: newspaper.name
             })
         })
-
     })
 })
 
@@ -58,8 +58,31 @@ app.get('/news', (req, res) => {
     res.json(article)
 })
 
-app.get('/news/:newspaperId', (req, res) => {
-  res.json(article)
+app.get('/news/:newspaperId', async (req, res) => {
+    //console.log(req.params.newspaperId)
+    const newspaperId = req.params.newspaperId
+
+    const newspaperAddress = newspapers.filter(newspaper => newspaper.name === newspaperId)[0].address
+    const newspaperBase = newspapers.filter(newspaper => newspaper.name === newspaperId)[0].base
+   // console.log(newspaperAddress)
+
+    axios.get(newspaperAddress)
+        .then(response => {
+            const html = response.data
+            const $ = cheerio.load(html)
+            const specificArticles = []
+
+            $('a:contains("climate")', html).each(function () {
+                const title = $(this).text()
+                const url = $(this).attr('href')
+                specificArticles.push({
+                    title,
+                    url: newspaperBase + url,
+                    source: newspaperId
+                })
+            })
+            res.json(specificArticles)
+        }).catch(err => console.log(err))
 })
 
 
