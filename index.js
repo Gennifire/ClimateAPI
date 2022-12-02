@@ -58,6 +58,7 @@ app.get('/news', (req, res) => {
     res.json(article)
 })
 
+//scraping tool for specific websites
 app.get('/news/:newspaperId', async (req, res) => {
     //console.log(req.params.newspaperId)
     const newspaperId = req.params.newspaperId
